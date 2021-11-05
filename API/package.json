@@ -4,11 +4,12 @@
   "description": "Backend en Mongo y Express",
   "main": "index.js",
   "scripts": {
-    "dev" : "nodemon ./index.js"
+    "dev": "nodemon ./index.js"
   },
   "author": "Vladimir Maidana",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "mongoose": "^6.0.12"
   },
