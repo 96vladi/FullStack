@@ -6,26 +6,31 @@ import clienteAxios from './config/axios';
 //Components
 import Pacientes from './components/Pacientes';
 import NuevaCita from './components/NuevaCita';
-import Cita from './Cita';
+import Cita from './components/Cita';
 
 function App() {
 
   // State the app
   const [citas, guardarCitas] = useState([]);
+  const [consultar, guardarConsultar] = useState(true);
 
   useEffect( () => {
-    const consultarAPI = () => {
-      clienteAxios.get('/pacientes')
-        .then(respuesta => {
-          // put the result in state
-          guardarCitas(respuesta.data);
-        })
-        .catch(error => {
-          console.log(error);
-        })
-    };
-    consultarAPI();
-  },  []);
+    if (consultar) {
+      const consultarAPI = () => {
+        clienteAxios.get('/pacientes')
+          .then(respuesta => {
+            // put the result in state
+            guardarCitas(respuesta.data);
+            // disable query
+            guardarConsultar(false);
+          })
+          .catch(error => {
+            console.log(error);
+          })
+      };
+      consultarAPI();
+    }
+  },  [consultar]);
 
   console.log(process.env.REACT_APP_BACKEND_URL);
 
@@ -41,12 +46,22 @@ function App() {
         <Route 
           exact 
           path="/nueva"
-          component={NuevaCita}
+          component={ () => <NuevaCita guardarConsultar={guardarConsultar}/>}
         />
         <Route 
           exact 
           path="/cita/:id"
-          component={Cita}
+          // component={Cita}
+          // render is to be able to pass props
+          render={(props) => {
+            const cita = citas.filter(cita => cita._id === props.match.params.id)
+            return(
+              <Cita 
+                cita = {cita[0]}
+                guardarConsultar = {guardarConsultar}
+              />
+            );
+          }}
         />
       </Switch>
     </Router>
